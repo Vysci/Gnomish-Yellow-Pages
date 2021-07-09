@@ -1,0 +1,22 @@
+------------------------------------------------------------------------
+r64 | stolenlegacy | 2011-09-04 02:56:51 +0000 (Sun, 04 Sep 2011) | 1 line
+Changed paths:
+   M /trunk/libs/LibTradeSkillScan.lua
+
+Fixing an issue with the loading of LibTradeSkillScan.lua, which caused GYP to not load properly.
+------------------------------------------------------------------------
+r63 | lilsparky | 2011-07-10 17:09:18 +0000 (Sun, 10 Jul 2011) | 4 lines
+Changed paths:
+   M /trunk/.pkgmeta
+   M /trunk/GnomishYellowPages.lua
+   M /trunk/GnomishYellowPages.toc
+   M /trunk/TradeButton.lua
+   M /trunk/Window.lua
+   A /trunk/libs
+   A /trunk/libs/LibTradeSkillScan.lua
+
+updated for 4.2
+automated who system still disabled
+shares scanning code with gnomeworks (should be made into a legit lib at some point)
+
+------------------------------------------------------------------------
