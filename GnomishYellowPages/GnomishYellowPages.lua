@@ -1645,6 +1645,7 @@ this would help cut down on data overload
 
 
 	local function InitSystem(spellList)
+		print("Init")
 		local version, build = GetBuildInfo()
 
 		build = tonumber(build)
@@ -1915,6 +1916,7 @@ this would help cut down on data overload
 
 
 	local function OnLoad()
+		print ("LOADED")
 		local guid = UnitGUID("player")
 		playerGUID = string.gsub(guid,"0x0+", "")
 
@@ -1950,6 +1952,18 @@ this would help cut down on data overload
 	end
 
 
+	function GYP.RegisterEvent(event,func)
+		if eventFrame==nil then
+			eventFrame=CreateFrame("Frame")	
+		end
+		if eventFrame._GPIPRIVAT_events==nil then 
+			eventFrame._GPIPRIVAT_events={}
+			eventFrame:SetScript("OnEvent",EventHandler)
+		end
+		tinsert(eventFrame._GPIPRIVAT_events,{event,func})
+		eventFrame:RegisterEvent(event)	
+	end
+
 	local function ChatEventHandler(message)
 		ChatMessage(message)
 	end
@@ -1965,12 +1979,7 @@ this would help cut down on data overload
 			master:UnregisterEvent("PLAYER_ENTERING_WORLD")
 		end )
 	else
-		RegisterEvent(master, "ADDON_LOADED", function(addOn)
-			if addOn == "GnomishYellowPages" then
-				CreateTimer("Load", 5, OnLoad)
-				master:UnregisterEvent("ADDON_LOADED")
-			end
-		end)
+		GYP.RegisterEvent("ADDON_LOADED",OnLoad)
 --		OnLoad()
 	end
 

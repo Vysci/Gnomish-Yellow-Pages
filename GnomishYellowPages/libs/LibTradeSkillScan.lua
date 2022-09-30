@@ -252,12 +252,21 @@ do
 			end
 		end
 
-		progressBar = CreateFrame("Frame", nil, UIParent)
+		local backdropInfo =
+		{
+			bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
+			edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
+			tile = true,
+			tileEdge = true,
+			tileSize = 16,
+			edgeSize = 16,
+			insets = { left = 4, right = 4, top = 4, bottom = 4 },
+		}
 
-		progressBar:SetBackdrop({bgFile = "Interface/Tooltips/UI-Tooltip-Background",
-                                            edgeFile = "Interface/Tooltips/UI-Tooltip-Border",
-                                            tile = true, tileSize = 16, edgeSize = 16,
-                                            insets = { left = 4, right = 4, top = 4, bottom = 4 }});
+		local progressBar = CreateFrame("Frame", nil, UIParent, "BackdropTemplate")
+		progressBar:SetBackdrop(backdropInfo)
+
+	
 		progressBar:SetBackdropColor(0,0,0,1);
 
 
@@ -327,11 +336,28 @@ do
 		scanFrame:SetScript("OnUpdate", OnUpdate)
 
 
-		local tradeIDList = { 2259, 2018, 7411, 4036, 45357, 25229, 2108, 3908,  2550, 3273 }
+		--local tradeIDList = { 2259, 2018, 7411, 4036, 45357, 25229, 2108, 3908,  2550, 3273 }
+	
 
-		for tradeIndex, tradeID in ipairs(tradeIDList) do
+		--for tradeIndex, tradeID in ipairs(tradeIDList) do
 
-			local _,tradeLink = GetSpellLink(tradeID)
+		--	local tradeLink, _ = GetSpellTradeSkillLink(tradeID)
+	--		print("Trade Link for id: " .. tradeID)
+	--		print(tradeLink)
+
+	--		local bitMap = string.match(tradeLink,"|c%x+|Htrade:%d+:%d+:%d+:[0-9a-fA-F]+:([A-Za-z0-9+/]+)|h%[[^]]+%]|h|r")
+
+	--		bitMapSizes[tradeIndex] = string.len(bitMap)
+	--	end
+		
+
+		local tradeNameList = { "Alchemy", "Blacksmithing", "Enchanting", "Engineering", "Inscription", "Jewelcrafting", "Leatherworking", "Tailoring",  "Cooking", "First Aid" }
+		for tradeIndex, tradeName in ipairs(tradeNameList) do
+
+			CastSpellByName(tradeName)
+			local tradeLink, _ = GetTradeSkillListLink()
+			print("Trade Link for id: " .. tradeName)
+			print(tradeLink)
 
 			local bitMap = string.match(tradeLink,"|c%x+|Htrade:%d+:%d+:%d+:[0-9a-fA-F]+:([A-Za-z0-9+/]+)|h%[[^]]+%]|h|r")
 
@@ -548,11 +574,13 @@ do
 	local function waitForSpellLinks()
 		for tradeIndex, tradeID in pairs(tradeIDList) do
 			local spellLink, tradeLink = GetSpellLink(tradeID)
+			print("WAITING FOR SPELL LINKS")
+			print(tradeID)
+			--if not tradeLink then
+		--		return
+		--	end
 
-			if not tradeLink then
-				return
-			end
-
+		if tradeLink ~= nil then
 			local tradeHead, bitMap = string.match(tradeLink, "(|cffffd000|Htrade:%d+:%d+:%d+:[0-9A-Fa-f]+:)([0-9a-zA-Z+/]+)")
 			local len = string.len(bitMap)
 
@@ -563,6 +591,7 @@ do
 --print(fullLink, string.gsub(fullLink, "|", "||"))
 
 			fullTradeLink[tradeID] = fullLink
+			end
 		end
 
 		return true
@@ -575,8 +604,11 @@ do
 		build = build or 0
 
 		minBuild = min(build, minBuild)
-
+		print("BUILD IS: " .. build)
+		print("MIN BUILD: " .. minBuild)
+		print("CLIENT BUILD: " .. clientBuild)
 		if build == clientBuild and spellList then
+			print("INSIDE")
 			spellList = data								-- copy this data!
 		end
 
@@ -585,7 +617,7 @@ do
 		if minBuild ~= clientBuild then
 			if not scanInitiated then
 				scanInitiated = true
-
+				print("DELAY FRAME")
 				local delayFrame = CreateFrame("Frame")
 				delayFrame.timer = 1
 				delayFrame:SetScript("OnUpdate", function(frame, elapsed)
@@ -605,10 +637,12 @@ do
 				end)
 			else
 				if scanComplete then
+					print("SCAN COMPLETE")
 					initFunction(spellList)
 				end
 			end
 		else
+			print("INIT FUNC")
 			initFunction(data)
 		end
 	end
